@@ -6,4 +6,6 @@ connect(host=url)
 class Contact(Document):
     full_name = StringField(required=True)
     email = StringField(required=True)
-    is_email_sent = BooleanField(default=False)
+    phone_number = StringField(required=True)
+    preferred_contact_method = StringField(required=True, choices=('email', 'sms'))
+    is_contacted = BooleanField(default=False)

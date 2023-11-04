@@ -15,14 +15,13 @@ def callback(ch, method, properties, body):
     contact_id = json.loads(body)
     if send_email(contact_id):
         # Оновлення статусу контакту після імітації відправлення email
-        Contact.objects(id=contact_id).update_one(set__is_email_sent=True)
+        Contact.objects(id=contact_id).update_one(set__is_contacted=True)
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 # Встановлення з'єднання з RabbitMQ
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
-
 
 # Оголошення черги
 channel.queue_declare(queue='email_queue')
@@ -32,5 +31,5 @@ channel.basic_consume(queue='email_queue',
                       on_message_callback=callback,
                       auto_ack=False)
 
-print(' [*] Waiting for messages. To exit press CTRL+C')
+print(' [*] Waiting for email messages. To exit press CTRL+C')
 channel.start_consuming()
